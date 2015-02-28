@@ -1,0 +1,8 @@
+---
+hosts: []
+http_config: {}
+nginx_selfsigned_subject: "/C=DE/ST=Northrhine-Westfalia/L=Bonn/O=IT/CN={{ ansible_fqdn }}"
+nginx_user: "www-data"
+nginx_default_listen: "*:80"
+nginx_rotation_interval: weekly
+nginx_rotation_files: 52
