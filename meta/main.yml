@@ -1,0 +1,14 @@
+---
+galaxy_info:
+  author: Benjamin Eberlei
+  description: Qafoo Nginx Role for Ubuntu Web/App Servers
+  company: Qafoo GmbH
+  license: BSD
+  min_ansible_version: 1.7
+  platforms:
+    - name: Ubuntu
+      versions:
+        - trusty
+  categories:
+    - system
+dependencies: []
