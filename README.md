@@ -6,7 +6,8 @@ Ansible Role to setup Nginx as either Loadbalancer or FastCGI frontend.
 Requirements
 ------------
 
-Ubuntu Server
+- Ubuntu Server
+- Servers with this role must have the Ansible group `nginx`
 
 Role Variables
 --------------
@@ -47,13 +48,13 @@ a logrotate script is registered to rotate weekly and keep 52 files.
       roles:
         - name: "qafoo.base"
         - name: "qafoo.nginx"
-          http_config:
+          nginx_http_config:
             proxy:
               - proxy_set_header X-Real-IP  $remote_addr
               - proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for
             upstream:
               - upstream foo { server 127.0.0.1:8080 weight=10; }
-          hosts:
+          nginx_hosts:
             - name: "qafoocom"
               server_name: "qafoo.com qafoo.local"
               root: "/var/www/qafoo.com"

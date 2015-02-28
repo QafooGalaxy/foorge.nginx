@@ -1,6 +1,6 @@
 ---
-hosts: []
-http_config: {}
+nginx_hosts: []
+nginx_http_config: {}
 nginx_selfsigned_subject: "/C=DE/ST=Northrhine-Westfalia/L=Bonn/O=IT/CN={{ ansible_fqdn }}"
 nginx_user: "www-data"
 nginx_default_listen: "*:80"
