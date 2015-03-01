@@ -93,3 +93,8 @@ The following variables exist on a host item:
 - directives: A list of strings that are added to the server.
 
 The `http_config` is a hashmap containing a list of entries. Each hashmap key leads to a file `/etc/nginx/conf.d/key.conf`.
+
+LICENSE
+-------
+
+MIT License
