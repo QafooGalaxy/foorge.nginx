@@ -7,7 +7,7 @@ Requirements
 ------------
 
 - Ubuntu Server
-- Servers with this role must have the Ansible group `nginx`
+- Dependency on "qafoo.base" role
 
 Role Variables
 --------------
@@ -20,6 +20,8 @@ Role Variables
     nginx_default_listen: "*:80"
     nginx_rotation_interval: weekly
     nginx_rotation_files: 52
+    nginx_consul_service: nginx
+    nginx_consul_ports: [80]
 
 Example Playook
 ---------------

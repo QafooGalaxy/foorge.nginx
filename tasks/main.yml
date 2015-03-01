@@ -1,7 +1,6 @@
 ---
 - name: "Install Nginx"
   apt: pkg=nginx-full
-  when: "'nginx' in group_names"
 
 - name: "Remove default Nginx vhost"
   file: path=/etc/nginx/sites-enabled/{{ item }} state=absent
@@ -9,7 +8,6 @@
     - default
     - www.domain.de.conf.example
   notify: Restart Nginx
-  when: "'nginx' in group_names"
 
 - name: "Create /etc/nginx/ssl directory"
   file: >
@@ -18,14 +16,12 @@
     group=root
     mode=0640
     state=directory
-  when: "'nginx' in group_names"
 
 - name: "Create self-signed SSL cert /etc/nginx/ssl/server.crt"
   command: >
      openssl req -new -nodes -x509 -subj "{{ nginx_selfsigned_subject }}" -days 3650 -keyout /etc/nginx/ssl/server.key -out /etc/nginx/ssl/server.crt -extensions v3_ca
      creates=/etc/nginx/ssl/server.crt
   notify: Restart Nginx
-  when: "'nginx' in group_names"
 
 - name: Generate Virtual Hosts
   template:
@@ -36,14 +32,17 @@
     mode=0644
   notify: Restart Nginx
   with_items: nginx_hosts
-  when: "'nginx' in group_names"
 
 - name: Create conf.d configuration files
   template: src=config.conf.j2 dest=/etc/nginx/conf.d/{{ item }}.conf
   with_items: nginx_http_config.keys()
   notify: Restart Nginx
-  when: "'nginx' in group_names"
 
 - name: Logrotate Rules for Nginx
   template: src=logrotate.j2 dest=/etc/logrotate.d/nginx
-  when: "'nginx' in group_names"
+
+- name: Register Consul Service
+  template: src=consul.j2 dest=/etc/consul.d/{{ nginx_consul_service }}.json
+
+- name: Reload Consul
+  command: consul reload
