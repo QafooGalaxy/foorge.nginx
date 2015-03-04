@@ -1,0 +1,10 @@
+{
+    "name": "qafoogalaxy/foorge.nginx",
+    "description": "Nginx Resource/Service for a Foorge Cluster",
+    "license": "MIT",
+    "type": "ansible-role",
+    "require": {
+        "qafoogalaxy/installer": "@stable",
+        "qafoogalaxy/foorge.base": "@stable"
+    }
+}
