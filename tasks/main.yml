@@ -42,7 +42,9 @@
   template: src=logrotate.j2 dest=/etc/logrotate.d/nginx
 
 - name: Register Consul Service
-  template: src=consul.j2 dest=/etc/consul.d/{{ nginx_consul_service }}.json
+  template: src=consul.j2 dest=/etc/consul.d/nginx.json
+  register: nginx_consul_service
 
 - name: Reload Consul
   command: consul reload
+  when: nginx_consul_service|changed

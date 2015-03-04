@@ -3,13 +3,7 @@
 {% for port in nginx_consul_ports %}
     {
         "name": "nginx",
-        "tags": [
-{% for host in nginx_hosts %}
-{% for server in host.server_name.split() %}
-    "{{ server }}"{% if not loop.last %},{% endif %}
-{% endfor %}
-{% endfor %}
-        ],
+        "tags": [{% for host in nginx_hosts %}"{{ host.name }}"{% if not loop.last %},{% endif %}{% endfor %}],
         "port": {{ port }}
     }{% if not loop.last %},{% endif %}
 {% endfor %}
