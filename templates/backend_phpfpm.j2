@@ -1,8 +1,8 @@
 server {
     listen      {{ item.listen|default(nginx_default_listen) }};
     server_name {{ item.server_name|mandatory }};
-    access_log  /var/log/nginx/{{ item.name }}_access.log {{ item.access_log_format|default('combined') }};
-    error_log   /var/log/nginx/{{ item.name }}_error.log {{ item.error_log_format|default('warn') }};
+    access_log  /var/log//{{ item.app }}/nginx/access.log {{ item.access_log_format|default('combined') }};
+    error_log   /var/log/{{ item.app }}/nginx/error.log {{ item.error_log_format|default('warn') }};
 
     set $index "{{ item.index|default('index.php') }}";
 

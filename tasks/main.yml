@@ -23,10 +23,19 @@
      creates=/etc/nginx/ssl/server.crt
   notify: Restart Nginx
 
+- name: Create Log-Directories
+  file: >
+    path=/var/log/{{ item.app }}/nginx
+    state=directory
+    owner={{ nginx_user }}
+    group={{ nginx_user }}
+    mode=0640
+  with_items: nginx_hosts
+
 - name: Generate Virtual Hosts
   template:
     src=backend_{{ item.backend_type|default('phpfpm') }}.j2
-    dest=/etc/nginx/sites-enabled/{{ item.name|mandatory }}.conf
+    dest=/etc/nginx/sites-enabled/{{ item.app }}.conf
     owner={{ nginx_user }}
     group={{ nginx_user }}
     mode=0644
@@ -39,7 +48,8 @@
   notify: Restart Nginx
 
 - name: Logrotate Rules for Nginx
-  template: src=logrotate.j2 dest=/etc/logrotate.d/nginx
+  template: src=logrotate.j2 dest=/etc/logrotate.d/nginx-{{ item.app }}
+  with_items: nginx_hosts
 
 - name: Register Consul Service
   template: src=consul.j2 dest=/etc/consul.d/nginx.json
