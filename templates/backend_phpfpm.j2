@@ -21,7 +21,7 @@ server {
     }
 
     location ~ \.php {
-        fastcgi_pass   {{ item.fastcgi_pass|default('unix:/var/run/php5-fpm.sock') }};
+        fastcgi_pass   {{ item.fastcgi_pass|default('unix:/var/run/php5-fpm-' ~ item.app ~ '.sock') }};
         fastcgi_index  $index;
         include        fastcgi_params;
 
