@@ -33,15 +33,15 @@ Minimal example:
         - name: "qafoo.base"
         - name: "qafoo.nginx"
           hosts:
-            - { name: "qafoocom", server_name: "qafoo.com qafoo.local", root: "/var/www/qafoo.com" }
+            - { name: "qafoocom", server_name: "qafoo.com qafoo.local" }
 
 This sets up Nginx with one virtual host named "qafoocom", listening on
 ``*:80`` for http requests against the hosts `qafoo.com` or `qafoo.local`. The
 default backend is PHP-FPM and defaults to listening for an `index.php` in the
-root folder `/var/www/qafoo.com` using the FPM socket `/var/run/php5-fpm.sock`
+root folder `/var/www/qafoocom` using the FPM socket `/var/run/php5-fpm.sock`
 that the "qafoo.php" role defaults to.
 
-Access and Error logs are always placed at `/var/www/nginx/{{ name }}_(access|error).log` and
+Access and Error logs are always placed at `/var/log/{{ app }}/nginx/(access|error).log` and
 a logrotate script is registered to rotate weekly and keep 52 files.
 
     ---
@@ -58,7 +58,6 @@ a logrotate script is registered to rotate weekly and keep 52 files.
           nginx_hosts:
             - name: "qafoocom"
               server_name: "qafoo.com qafoo.local"
-              root: "/var/www/qafoo.com"
 
             - name: "symfonyapp"
               listen: "443"
