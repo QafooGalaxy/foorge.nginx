@@ -7,7 +7,7 @@ server {
     set $index "{{ item.index|default('index.php') }}";
 
     index $index;
-    root "{{ item.root|mandatory }}";
+    root "{{ item.root|default('/var/www/' ~ item.app) }}";
 
     location / {
         if (-f $request_filename) {
