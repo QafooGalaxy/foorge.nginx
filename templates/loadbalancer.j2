@@ -1,0 +1,25 @@
+upstream {{ foorge_project }}_backend_{{ item.name }} {
+    server {{ item.name }}.{{ foorge_project }}.service.consul;
+    server 127.0.0.1:65535 down; # down server
+}
+
+server {
+    listen *:443;
+    server_name {{ item.server_name|mandatory }};
+
+    location / {
+        proxy_pass http://{{ foorge_project }}_backend_{{ item.name }};
+    }
+
+    ssl on;
+    ssl_certificate /etc/nginx/ssl/{{ item.certificate|default('server') }}.crt;
+    ssl_certificate_key /etc/nginx/ssl/{{ item.certificate|default('server') }}.key;
+
+    {% for v in item.directives|default([]) %}
+    {% if v.find('\n') != -1 %}
+       {{v.replace("\n","\n   ")}}
+    {% else %}
+       {% if v != "" %}{{ v.replace(";",";\n      ").replace(" {"," {\n      ").replace(" }"," \n   }\n") }}{% if v.find('{') == -1%};
+    {% endif %}{% endif %}{% endif %}
+    {% endfor %}
+}

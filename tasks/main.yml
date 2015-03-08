@@ -3,44 +3,34 @@
   apt: pkg=nginx-full
 
 - name: "Remove default Nginx vhost"
-  file: path=/etc/nginx/sites-enabled/{{ item }} state=absent
-  with_items:
-    - default
-    - www.domain.de.conf.example
+  file: path=/etc/nginx/sites-enabled/default state=absent
   notify: Restart Nginx
 
-- name: "Create /etc/nginx/ssl directory"
+- name: "Create directories"
   file: >
-    path=/etc/nginx/ssl
-    owner=root
-    group=root
-    mode=0640
-    state=directory
-
-- name: "Create self-signed SSL cert /etc/nginx/ssl/server.crt"
-  command: >
-     openssl req -new -nodes -x509 -subj "{{ nginx_selfsigned_subject }}" -days 3650 -keyout /etc/nginx/ssl/server.key -out /etc/nginx/ssl/server.crt -extensions v3_ca
-     creates=/etc/nginx/ssl/server.crt
-  notify: Restart Nginx
-
-- name: Create Log-Directories
-  file: >
-    path=/var/log/{{ item.app }}/nginx
+    path={{ item }}
     state=directory
     owner={{ nginx_user }}
     group={{ nginx_user }}
     mode=0640
-  with_items: nginx_hosts
+  with_items:
+      - /var/log/{{ foorge_project }}/nginx
+      - /etc/nginx/includes.d
 
-- name: Generate Virtual Hosts
+- name: "Copy fastcgi includes"
+  copy: src={{ item }} dest=/etc/nginx/includes.d/{{ item }}
+  with_items:
+    - foorge_fastcgi_php.conf
+
+- name: "Generate Public Hosts"
   template:
-    src=backend_{{ item.backend_type|default('phpfpm') }}.j2
-    dest=/etc/nginx/sites-enabled/{{ item.app }}.conf
+    src=loadbalancer.j2
+    dest=/etc/nginx/sites-enabled/{{ foorge_project }}_public_{{ item.name }}.conf
     owner={{ nginx_user }}
     group={{ nginx_user }}
     mode=0644
   notify: Restart Nginx
-  with_items: nginx_hosts
+  with_items: nginx_public_hosts
 
 - name: Create conf.d configuration files
   template: src=config.conf.j2 dest=/etc/nginx/conf.d/{{ item }}.conf
@@ -48,13 +38,4 @@
   notify: Restart Nginx
 
 - name: Logrotate Rules for Nginx
-  template: src=logrotate.j2 dest=/etc/logrotate.d/nginx-{{ item.app }}
-  with_items: nginx_hosts
-
-- name: Register Consul Service
-  template: src=consul.j2 dest=/etc/consul.d/nginx.json
-  register: nginx_consul_service
-
-- name: Reload Consul
-  command: consul reload
-  when: nginx_consul_service|changed
+  template: src=logrotate.j2 dest=/etc/logrotate.d/nginx-{{ foorge_project }}

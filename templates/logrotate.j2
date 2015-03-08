@@ -1,4 +1,4 @@
-/var/log/{{ item.app }}/nginx/*.log {
+/var/log/{{ foorge_project }}/nginx/*.log {
 	{{ nginx_rotation_interval }}
 	missingok
 	rotate {{ nginx_rotation_files }}
